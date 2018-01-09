@@ -19,6 +19,7 @@ namespace MyLoginSystem
             int GetIndicatorColor(int position);
             int GetDividerColors(int position);
             
+
         }
     }
 }
