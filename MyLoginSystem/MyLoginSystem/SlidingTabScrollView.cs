@@ -12,7 +12,13 @@ using Android.Widget;
 
 namespace MyLoginSystem
 {
-    class SlidingTabScrollView
+    public class SlidingTabScrollView
     {
+        public interface TabColorizer
+        {
+            int GetIndicatorColor(int position);
+            int GetDividerColors(int position);
+            
+        }
     }
 }
