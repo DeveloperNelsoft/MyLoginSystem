@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:background="@android:color/background_light"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+    <EditText
+        android:hint="FirstName"
+        android:background="@android:color/holo_orange_light"
+        android:textColor="@android:color/background_dark"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:inputType="text"
+        android:id="@+id/txtFirstName" />
+    <EditText
+        android:hint="Email"
+        android:background="@android:color/holo_orange_light"
+        android:textColor="@android:color/background_dark"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:inputType="text"
+        android:id="@+id/txtEmail" />
+    <EditText
+        android:hint="Password"
+        android:background="@android:color/holo_orange_light"
+        android:textColor="@android:color/background_dark"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:inputType="textPassword"
+        android:id="@+id/txtPassword" />
+    <Button
+        android:text="Button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:id="@+id/btnSignUp"
+        android:background="@drawable/buttonSignUpStyle"
+        android:drawableLeft="@drawable/DefEmail" />
+</LinearLayout>
