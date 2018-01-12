@@ -66,6 +66,43 @@ namespace MyLoginSystem
 
             mBottomBorderPaint = new Paint();
             mBottomBorderPaint.Color = GetColorFromInteger(0xC5C5C5); //GRAY
+
+            mSelectedIndicatorThickness = (int)(DEFAULT_BOTTOM_BORDER_THICKNESS_DIPS * density);
+            mSelectedIndicatorPaint = new Paint();
+
+            mDividerHeight = DEFAULT_DIVIDER_HEIGHT;
+            mDividerPaint = new Paint();
+            mDividerPaint.StrokeWidth = (int)(DEFAULT_DIVIDER_THICKNESS_DIPS * density);
+
+        }
+
+        public SlidingTabScrollView.TabColorizer CustomTabColorizer
+        {
+            set
+            {
+                mCustomTabColorizer = value;
+                this.Invalidate();
+            }
+        }
+
+        public int[] SelectedIndicatorColors
+        {
+            set
+            {
+                mCustomTabColorizer = null;
+                mDefaultTabColorizer.IndicatorColors = value;
+                this.Invalidate();
+            }
+        }
+
+        public int[] DividerColors
+        {
+            set
+            {
+                mDefaultTabColorizer = null;
+                mDefaultTabColorizer.DividerColors = value;
+                this.Invalidate();
+            }
         }
 
         private Color GetColorFromInteger(int color)
@@ -73,9 +110,73 @@ namespace MyLoginSystem
             return Color.Rgb( Color.GetRedComponent(color), Color.GetGreenComponent(color), Color.GetBlueComponent(color));
         }
 
-        private int SetColorAlpha(int themeForeGround, byte DEFAULT_BOTTOM_BORDER_COLOR_ALPHA)
+        private int SetColorAlpha(int color, byte alpha)
         {
-            throw new NotImplementedException();
+            return Color.Argb(alpha, Color.GetRedComponent(color), Color.GetGreenComponent(color), Color.GetBlueComponent(color));
+        }
+
+        public void OnViewPagerPageChanged(int position, float positionOffset)
+        {
+            mSelectedPosition = position;
+            mSelectionOffset = positionOffset;
+            this.Invalidate();
+        }
+
+        protected override void OnDraw(Canvas canvas)
+        {
+            int height = Height;
+            int tabCount = ChildCount;
+            int dividerHeightPx = (int)(Math.Min(Math.Max(0f, mDividerHeight), 1f) * height);
+            SlidingTabScrollView.TabColorizer tabColorizer = mCustomTabColorizer != null ? mCustomTabColorizer : mDefaultTabColorizer;
+
+
+            //Thick colored unerline below the current selection.
+            if (tabCount > 0)
+            {
+                View selectedTitle = GetChildAt(mSelectedPosition);
+                int left = selectedTitle.Left;
+                int right = selectedTitle.Right;
+                int color = tabColorizer.GetIndicatorColor(mSelectedPosition);
+
+                if (mSelectionOffset > 0f && mSelectedPosition < (tabCount -1))
+                {
+                    int nextColor = tabColorizer.GetIndicatorColor(mSelectedPosition + 1);
+                    if (color != nextColor)
+                    {
+                        color = blendColor(nextColor, color, mSelectionOffset);
+                    }
+                    View nextTitle = GetChildAt(mSelectedPosition + 1);
+                    left = (int)(mSelectionOffset * nextTitle.Left + (1.0f - mSelectionOffset) * left);
+                    right = (int)(mSelectionOffset * nextTitle.Right + (1.0f - mSelectionOffset) * right);
+
+                }
+
+                mSelectedIndicatorPaint.Color = GetColorFromInteger(color);
+                canvas.DrawRect(left, right - mSelectedIndicatorThickness, right, height, mSelectedIndicatorPaint);
+
+                //CreateAccessibilityNodeInfo vertical dividers between tabs.
+
+                int separatorTop = (height - dividerHeightPx) / 2;
+                for (int i = 0; i < ChildCount; i++)
+                {
+                    View child = GetChildAt(i);
+                    mDividerPaint.Color = GetColorFromInteger(tabColorizer.GetDividerColors(i));
+                    canvas.DrawLine(child.Right, separatorTop, child.Right, separatorTop + dividerHeightPx, mDividerPaint);
+                }
+
+                canvas.DrawRect(0, height - mBottomBorderThickness, Width, height, mBottomBorderPaint);
+
+            }
+        }
+
+        private int blendColor(int color1, int color2, float ratio)
+        {
+            float inverseRatio = 1f - ratio;
+            float r = (Color.GetRedComponent(color1) * ratio) + (Color.GetRedComponent(color2) * inverseRatio);
+            float g = (Color.GetGreenComponent(color1) * ratio) + (Color.GetGreenComponent(color2) * inverseRatio);
+            float b = (Color.GetBlueComponent(color1) * ratio) + (Color.GetBlueComponent(color2) * inverseRatio);
+
+            return Color.Rgb((int)r, (int)g, (int)b);
         }
 
         private class SimpleTabColorizer : SlidingTabScrollView.TabColorizer

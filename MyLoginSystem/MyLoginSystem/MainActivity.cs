@@ -2,6 +2,8 @@
 using Android.Widget;
 using Android.OS;
 using System.Threading;
+using Android.Views;
+using Android.Content;
 
 namespace MyLoginSystem
 {
@@ -9,6 +11,7 @@ namespace MyLoginSystem
     public class MainActivity : Activity
     {
         private Button mBtnSignUp;
+        private Button mBtnSignIn;
         private ProgressBar mProgressBar;
 
         protected override void OnCreate(Bundle savedInstanceState)
@@ -16,12 +19,21 @@ namespace MyLoginSystem
             base.OnCreate(savedInstanceState);
 
             // Set our view from the "main" layout resource
+
             SetContentView(Resource.Layout.Main);
 
             mBtnSignUp = FindViewById<Button>(Resource.Id.btnSignUp);
+            mBtnSignIn = FindViewById<Button>(Resource.Id.btnSignIn);
             mProgressBar = FindViewById<ProgressBar>(Resource.Id.progressBar1);
 
             mBtnSignUp.Click += MBtnSignUp_Click;
+            mBtnSignIn.Click += MBtnSignIn_Click;
+        }
+
+        private void MBtnSignIn_Click(object sender, System.EventArgs e)
+        {
+            Intent scrollViewActivity = new Intent(this, typeof(ChargeScrollViewActivity));
+            StartActivity(scrollViewActivity);
         }
 
         private void MBtnSignUp_Click(object sender, System.EventArgs e)
@@ -45,6 +57,12 @@ namespace MyLoginSystem
         {
             Thread.Sleep(3000);
             RunOnUiThread(() => { mProgressBar.Visibility = Android.Views.ViewStates.Invisible; });
+        }
+
+        public override bool OnCreateOptionsMenu(IMenu menu)
+        {
+            MenuInflater.Inflate(Resource.Menu.actionbar_main, menu);
+            return base.OnCreateOptionsMenu(menu);
         }
     }
 }
